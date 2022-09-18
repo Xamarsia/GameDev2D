@@ -38,6 +38,18 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 2412423119
+    locked: 0
+  - name: Far Shadow
+    uniqueID: 3335506105
+    locked: 0
+  - name: Ground
+    uniqueID: 4288880167
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Hero
+    uniqueID: 2785970197
     locked: 0
