@@ -8,10 +8,10 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
-  - 
+  - Player
   - 
   - 
   - 
@@ -50,6 +50,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Hero
+  - name: Player
     uniqueID: 2785970197
     locked: 0
