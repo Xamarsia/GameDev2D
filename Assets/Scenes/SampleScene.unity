@@ -3445,7 +3445,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 1005222782}
+  _groundCheck: {fileID: 1834902380}
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   _speed: 4
+  _jumpingPower: 6
+  _groundCheckerRadius: 0.15
 --- !u!1 &1200546978
 GameObject:
   m_ObjectHideFlags: 0
