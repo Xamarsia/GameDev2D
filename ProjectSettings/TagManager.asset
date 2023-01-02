@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Trap
   layers:
   - Default
   - TransparentFX
@@ -52,4 +53,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 2785970197
+    locked: 0
+  - name: Items
+    uniqueID: 3344490691
     locked: 0
