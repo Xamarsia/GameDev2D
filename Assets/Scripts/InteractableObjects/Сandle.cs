@@ -1,32 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Player;
 
 public class Сandle : MonoBehaviour
 {
     [SerializeField] private int _damage;
     [SerializeField] private float _damageDelay;
 
-    private PlayerMovement _playerMovement;
+    private PlayerCharacter _playerCharacter;
 
     private float _lastDamageTime;
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        _playerMovement = collider.GetComponent<PlayerMovement>();
-        if (_playerMovement != null)
+        _playerCharacter = collider.GetComponent<PlayerCharacter>();
+        if (_playerCharacter != null)
         {
-            _playerMovement.TakeDamage(_damage);
+            _playerCharacter.TakeDamage(_damage);
             _lastDamageTime = Time.time;
         }
     }
 
     private void Update()
     {
-        if (Time.time - _lastDamageTime > _damageDelay && _playerMovement != null)
+        if (Time.time - _lastDamageTime > _damageDelay && _playerCharacter != null)
         {
             Debug.Log(Time.time - _lastDamageTime);
-            _playerMovement.TakeDamage(_damage);
+            _playerCharacter.TakeDamage(_damage);
             _lastDamageTime = Time.time;
 
         }
@@ -34,10 +35,10 @@ public class Сandle : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collider)
     {
-        PlayerMovement playerMovement = collider.GetComponent<PlayerMovement>();
-        if (_playerMovement == playerMovement)
+        PlayerCharacter playerCharacter = collider.GetComponent<PlayerCharacter>();
+        if (_playerCharacter == playerCharacter)
         {
-            _playerMovement = null;
+            _playerCharacter = null;
         }
     }
 }
