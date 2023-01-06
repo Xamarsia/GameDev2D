@@ -45,11 +45,17 @@ TagManager:
   - name: Far Shadow
     uniqueID: 3335506105
     locked: 0
-  - name: Ground
-    uniqueID: 4288880167
+  - name: GroundItems
+    uniqueID: 3378495141
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 4288880167
+    locked: 0
+  - name: NPC
+    uniqueID: 617498959
     locked: 0
   - name: Player
     uniqueID: 2785970197

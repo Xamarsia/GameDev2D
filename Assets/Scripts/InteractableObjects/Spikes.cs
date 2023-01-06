@@ -2,42 +2,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Сandle : MonoBehaviour
+public class Spikes : MonoBehaviour
 {
     [SerializeField] private int _damage;
     [SerializeField] private float _damageDelay;
 
-    private PlayerMovement _playerMovement;
-
     private float _lastDamageTime;
+
+    private Health _health;
+
+
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        _playerMovement = collider.GetComponent<PlayerMovement>();
-        if (_playerMovement != null)
+
+        if (collider.tag == "Player")
         {
-            _playerMovement.TakeDamage(_damage);
+            _health = collider.GetComponent<Health>();
+            _health.TakeDamage(_damage);
             _lastDamageTime = Time.time;
         }
     }
 
     private void Update()
     {
-        if (Time.time - _lastDamageTime > _damageDelay && _playerMovement != null)
+        if (Time.time - _lastDamageTime > _damageDelay && _health != null)
         {
             Debug.Log(Time.time - _lastDamageTime);
-            _playerMovement.TakeDamage(_damage);
+            _health.TakeDamage(_damage);
             _lastDamageTime = Time.time;
-
         }
     }
 
     private void OnTriggerExit2D(Collider2D collider)
     {
-        PlayerMovement playerMovement = collider.GetComponent<PlayerMovement>();
-        if (_playerMovement == playerMovement)
+        //PlayerMovement playerMovement = GetComponent<PlayerMovement>();
+        //PlayerMovement playerMovement = collider.GetComponent<PlayerMovement>();
+        if (collider.tag == "Player")
         {
-            _playerMovement = null;
+            _health = null;
         }
     }
 }

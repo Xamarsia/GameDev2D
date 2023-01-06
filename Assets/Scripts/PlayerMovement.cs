@@ -1,4 +1,6 @@
+using System.Collections;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -6,13 +8,13 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
 
-    [Header("Stats")]
-    [SerializeField] private int _maxHp;
-    [SerializeField] private Slider _slider;
-    [SerializeField] private TMP_Text _hpText;
+    //[Header("Stats")]
+    //[SerializeField] private int _maxHp;
+    //[SerializeField] private Slider _slider;
+    //[SerializeField] private TMP_Text _hpText;
+    private IEnumerator coroutine;
 
     private int _currentHp;
-
 
     [Header("Movement")]
     [SerializeField] private Rigidbody2D _rigidbody;
@@ -30,45 +32,65 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool _isFacingRight = true;
 
     private float _startSpeed;
-
     public Animator _animator;
+    private SpriteRenderer _spriteRenderer;
 
-    private bool ctrlActive;
-    private bool isDead;
-
+    private bool SitDownToFireDefaultAnimation = true;
     private void Start()
     {
         _startSpeed = _speed;
-        _currentHp = _maxHp;
-        _slider.maxValue = _maxHp;
-        _slider.value = _currentHp;
-        _hpText.text = _currentHp.ToString();
-        ctrlActive = true;
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        //_currentHp = _maxHp;
+        //_slider.maxValue = _maxHp;
+        //_slider.value = _currentHp;
+        //_hpText.text = _currentHp.ToString();
     }
 
-    public void TakeDamage(int damage)
-    {
-        _currentHp -= damage;
-        _slider.value = _currentHp;
-        _hpText.text = _currentHp.ToString();
-        Debug.Log(_currentHp);
-        //if (_currentHp <= 0 )
-        //{
-        //    Die();
-        //    Debug.LogError("Player Dead");
-        //}
-    }
-
-    //private void Die()
+    //public void Heal(int healValue)
     //{
-    //    isDead = true;
-    //    _animator.SetBool("Death", isDead);
-    //    ctrlActive = false;
-    //    _headCollider.enabled = false;
-        
-
-    //    //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    //    _currentHp += healValue;
+    //    if (_currentHp > _maxHp)
+    //    {
+    //        _currentHp = _maxHp;
+    //    }
     //}
+
+    private IEnumerator CoroutineHurt()
+    {
+        yield return new WaitForSeconds(1);
+        _spriteRenderer.color = Color.white;
+    }
+    public void Hurt()
+    {
+        _spriteRenderer.color= Color.red;
+        StartCoroutine(CoroutineHurt());
+    }
+
+    //public void TakeDamage(int damage)
+    //{
+    //    _currentHp -= damage;
+    //    _slider.value = _currentHp;
+    //    _hpText.text = _currentHp.ToString();
+    //    Debug.Log(_currentHp);
+    //    if (_currentHp <= 0)
+    //    {
+    //        Die();
+    //        Debug.LogError("Player Dead");
+    //    }
+    //    _animator.SetBool("Hurt", true);
+    //}
+
+    public void Die()
+    {
+        _rigidbody.bodyType = RigidbodyType2D.Static;
+        Debug.LogError("Player Dead");
+        _animator.SetTrigger("Death");
+    }
+
+    private void RestartLevel1()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
     void Update()
     {
@@ -81,22 +103,67 @@ public class PlayerMovement : MonoBehaviour
         Animate();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+
+
+    public void AddJumping(float value, float duration)
     {
-        Potion potion = collision.collider.GetComponent<Potion>();
-        if (potion != null)
+        if (duration <= 0)
         {
-            Debug.Log("Pick up Potion");
-            
-            _speed *= potion.UpgradeTime;
-            Invoke(nameof(ResetSpeed), potion.UpgradePower);
-            Destroy(potion.gameObject);
+            _jumpingPower = _jumpingPower + value;
+        }
+        else
+        {
+            StartCoroutine(AddJumpingTemporary(value, duration));
         }
     }
-    private void ResetSpeed()
+
+    public IEnumerator AddJumpingTemporary(float value, float duration)
     {
-        _speed = _startSpeed;
+        _jumpingPower = _jumpingPower + value;
+        yield return new WaitForSeconds(duration);
+        _jumpingPower = _jumpingPower - value;
     }
+
+
+
+
+
+    public void AddSpeed(float value, float duration)
+    {
+        if(duration <= 0)
+        {
+            _speed = _speed + value;
+        }
+        else
+        {
+
+            StartCoroutine( AddSpeedTemporary(value, duration));
+        }
+    }
+
+    public IEnumerator AddSpeedTemporary(float value, float duration)
+    {
+        _speed = _speed + value;
+        yield return new WaitForSeconds(duration);
+        _speed = _speed - value;
+    }
+
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    Potion potion = collision.collider.GetComponent<Potion>();
+    //    if (potion != null)
+    //    {
+    //        Debug.Log("Pick up Potion");
+            
+    //        _speed *= potion.UpgradeTime;
+    //        Invoke(nameof(ResetSpeed), potion.UpgradePower);
+    //        Destroy(potion.gameObject);
+    //    }
+    //}
+    //private void ResetSpeed()
+    //{
+    //    _speed = _startSpeed;
+    //}
 
     private void OnDrawGizmos()
     {
@@ -153,11 +220,37 @@ public class PlayerMovement : MonoBehaviour
 
     private void Animate()
     {
-        if(ctrlActive)
-        {
-            _animator.SetBool("Run", _direction != 0);
-            _animator.SetBool("Crouch", !_headCollider.enabled);
-            _animator.SetBool("Jump", !IsGrounded());
-        }
+        _animator.SetBool("Run", _direction != 0);
+        _animator.SetBool("Crouch", !_headCollider.enabled);
+        _animator.SetBool("Jump", !IsGrounded());
     }
+
+
+    //private IEnumerator CoroutineAddStatsTemporary(StatType statType, float value, float duration)
+    //{
+    //    var oldValue = GetStatValue(statType);
+    //    float newValue = oldValue + value;
+
+    //    if (duration < 0 || value < 0)
+    //    {
+    //        Debug.LogError($"{statType} = duration {duration} cannot be less than zero");
+    //    }
+
+    //    SetStatValue(statType, newValue);
+    //    yield return new WaitForSeconds(duration);
+    //    SetStatValue(statType, oldValue);
+    //}
+
+    //public void MultiplyStats(StatType statType, float multiplier)
+    //{
+    //    var valueToAdd = GetStatValue(statType) * multiplier;
+    //    AddStats(statType, valueToAdd);
+    //}
+
+    //public void MultiplyStatsTemporary(StatType statType, float multiplier, float duration)
+    //{
+    //    var valueToAdd = GetStatValue(statType) * multiplier;
+    //    CoroutineAddStatsTemporary(statType, valueToAdd, duration);
+    //}
+
 }

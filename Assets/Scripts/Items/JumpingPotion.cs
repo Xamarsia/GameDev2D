@@ -1,8 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Potion : MonoBehaviour
+public class JumpingPotion : MonoBehaviour
 {
     [SerializeField] private float _upgradeTime;
     [SerializeField] private float _upgradePower;
@@ -14,10 +14,10 @@ public class Potion : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         playerMovement = collision.gameObject.GetComponent<PlayerMovement>();
-        if(playerMovement != null )
+        if (playerMovement != null)
         {
-            playerMovement.AddSpeed(_upgradePower, _upgradeTime);
-        
+            playerMovement.AddJumping(_upgradePower, _upgradeTime);
+
             Debug.Log("Potion");
             Destroy(gameObject);
         }
